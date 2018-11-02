@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Steam_Game_Selection
 {
@@ -22,6 +23,8 @@ namespace Steam_Game_Selection
         String[] avg = new String[50000];
         String[] mdm = new String[50000];
         String[] appid = new String[50000];
+        int countGame = 0;
+        bool sort = true;
 
         private void OpenUri(string uri)
         {
@@ -48,6 +51,8 @@ namespace Steam_Game_Selection
         private void button2_MouseClick(object sender, MouseEventArgs e)
         {
             string htmlCod = "";
+
+            countGame = 0;
 
             richTextBox1.Clear();
             Array.Clear(mass, 0, 140000);
@@ -77,8 +82,6 @@ namespace Steam_Game_Selection
 
             }
 
-            int z = 0;
-
             Regex regex = new Regex(@"<tr class=""app"" data-appid=""([0-9]+)");
 
             for (int i = 493; i <= j; i++)
@@ -87,14 +90,14 @@ namespace Steam_Game_Selection
 
                 foreach (Match match in matches)
                 {
-                    appid[z] = match.Groups[1].Value;
-                    z++;
+                    appid[countGame] = match.Groups[1].Value;
+                    countGame++;
 
                 }
 
             }
 
-            for (int y = 0; y < z; y++)
+            for (int y = 0; y < countGame; y++)
             {
                 OpenUri("https://steamdb.info/app/" + appid[y] + "/");
 
@@ -160,7 +163,7 @@ namespace Steam_Game_Selection
 
                 }
 
-                richTextBox1.Text += (y+1) + " " + game[y] + " " + " " + avg[y] + " " + mdm[y] + "\n";
+                richTextBox1.Text += (y+1) + " " + game[y] + " " + " " + avg[y] + " " + " " + " " + mdm[y] + "\n";
 
             }
 
@@ -168,7 +171,147 @@ namespace Steam_Game_Selection
 
         private void button3_MouseClick(object sender, MouseEventArgs e)
         {
+            string temp = "";
 
+            if (sort)
+            {
+                for (int i = 0; i < countGame; i++)
+                {
+                    for (int j = i + 1; j < countGame; j++)
+                    {
+                        if (Convert.ToSingle(avg[i], new CultureInfo("en-US")) > Convert.ToSingle(avg[j], new CultureInfo("en-US")))
+                        {
+                            temp = avg[i];
+                            avg[i] = avg[j];
+                            avg[j] = temp;
+
+                            temp = game[i];
+                            game[i] = game[j];
+                            game[j] = temp;
+
+                            temp = mdm[i];
+                            mdm[i] = mdm[j];
+                            mdm[j] = temp;
+
+                        }
+
+                    }
+
+                }
+
+                sort = false;
+
+            }
+            else
+            {
+                for (int i = 0; i < countGame; i++)
+                {
+                    for (int j = i + 1; j < countGame; j++)
+                    {
+                        if (Convert.ToSingle(avg[i], new CultureInfo("en-US")) < Convert.ToSingle(avg[j], new CultureInfo("en-US")))
+                        {
+                            temp = avg[i];
+                            avg[i] = avg[j];
+                            avg[j] = temp;
+
+                            temp = game[i];
+                            game[i] = game[j];
+                            game[j] = temp;
+
+                            temp = mdm[i];
+                            mdm[i] = mdm[j];
+                            mdm[j] = temp;
+
+                        }
+
+                    }
+
+                }
+
+                sort = true;
+
+            }
+
+            richTextBox1.Clear();
+
+            for (int y = 0; y < countGame; y++)
+            {
+                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + avg[y] + " " + " " + " " + mdm[y] + "\n";
+
+            }
+
+        }
+
+        private void button4_MouseClick(object sender, MouseEventArgs e)
+        {
+            string temp = "";
+
+            if (sort)
+            {
+                for (int i = 0; i < countGame; i++)
+                {
+                    for (int j = i + 1; j < countGame; j++)
+                    {
+                        if (Convert.ToSingle(mdm[i], new CultureInfo("en-US")) > Convert.ToSingle(mdm[j], new CultureInfo("en-US")))
+                        {
+                            temp = avg[i];
+                            avg[i] = avg[j];
+                            avg[j] = temp;
+
+                            temp = game[i];
+                            game[i] = game[j];
+                            game[j] = temp;
+
+                            temp = mdm[i];
+                            mdm[i] = mdm[j];
+                            mdm[j] = temp;
+
+                        }
+
+                    }
+
+                }
+
+                sort = false;
+
+            }
+            else
+            {
+                for (int i = 0; i < countGame; i++)
+                {
+                    for (int j = i + 1; j < countGame; j++)
+                    {
+                        if (Convert.ToSingle(mdm[i], new CultureInfo("en-US")) < Convert.ToSingle(mdm[j], new CultureInfo("en-US")))
+                        {
+                            temp = avg[i];
+                            avg[i] = avg[j];
+                            avg[j] = temp;
+
+                            temp = game[i];
+                            game[i] = game[j];
+                            game[j] = temp;
+
+                            temp = mdm[i];
+                            mdm[i] = mdm[j];
+                            mdm[j] = temp;
+
+                        }
+
+                    }
+
+                }
+
+                sort = true;
+
+            }
+
+            richTextBox1.Clear();
+
+            for (int y = 0; y < countGame; y++)
+            {
+                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + avg[y] + " " + " " + " " + mdm[y] + "\n";
+
+            }
 
         }
     }
