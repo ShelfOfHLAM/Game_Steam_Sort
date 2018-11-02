@@ -84,7 +84,7 @@ namespace Steam_Game_Selection
 
             Regex regex = new Regex(@"<tr class=""app"" data-appid=""([0-9]+)");
 
-            for (int i = 493; i <= j; i++)
+            for (int i = 0; i <= j; i++)
             {
                 MatchCollection matches = regex.Matches(mass[i]);
 
@@ -163,7 +163,7 @@ namespace Steam_Game_Selection
 
                 }
 
-                richTextBox1.Text += (y+1) + " " + game[y] + " " + " " + avg[y] + " " + " " + " " + mdm[y] + "\n";
+                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + "\"" + avg[y] + "\"" + " " + " " + " " + "\"" + mdm[y] + "\"" + "\n";
 
             }
 
@@ -236,7 +236,7 @@ namespace Steam_Game_Selection
 
             for (int y = 0; y < countGame; y++)
             {
-                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + avg[y] + " " + " " + " " + mdm[y] + "\n";
+                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + "\"" + avg[y] + "\"" + " " + " " + " " + "\"" + mdm[y] + "\"" + "\n"; 
 
             }
 
@@ -309,9 +309,78 @@ namespace Steam_Game_Selection
 
             for (int y = 0; y < countGame; y++)
             {
-                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + avg[y] + " " + " " + " " + mdm[y] + "\n";
+                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + "\"" + avg[y] + "\"" + " " + " " + " " + "\"" + mdm[y] + "\"" + "\n";
 
             }
+
+        }
+
+        private void button6_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            
+            string filename = saveFileDialog1.FileName;
+            
+            System.IO.File.WriteAllText(filename, richTextBox1.Text);
+            MessageBox.Show("Файл сохранен");
+
+        }
+
+        private void button5_MouseClick(object sender, MouseEventArgs e)
+        {
+            int j = 0;
+
+            countGame = 0;
+            richTextBox1.Clear();
+            Array.Clear(mass, 0, 140000);
+            Array.Clear(game, 0, 50000);
+            Array.Clear(avg, 0, 50000);
+            Array.Clear(mdm, 0, 50000);
+            Array.Clear(appid, 0, 50000);
+
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            
+            string filename = openFileDialog1.FileName;
+            
+            string fileText = System.IO.File.ReadAllText(filename);
+
+            for (int i = 0; i < fileText.Length ; i++)
+            {
+                if (fileText[i] != '\n')
+                {
+                    mass[j] = mass[j] + fileText[i];
+
+                }
+                else j++;
+
+            }
+
+            Regex regex = new Regex(@"[0-9] ([A-Z,0-9,:,', ,a-z,-]+)   ""([0-9,.]+)""   ""([0-9,.]+)""");
+
+            for (int i = 0; i < j; i++)
+            {
+                MatchCollection matches = regex.Matches(mass[i]);
+
+                foreach (Match match in matches)
+                {
+                    game[countGame] = match.Groups[1].Value;
+                    avg[countGame] = match.Groups[2].Value;
+                    mdm[countGame] = match.Groups[3].Value;
+                    countGame++;
+
+                }
+
+            }
+
+            for (int y = 0; y < countGame; y++)
+            {
+                richTextBox1.Text += (y + 1) + " " + game[y] + " " + " " + "\"" + avg[y] + "\"" + " " + " " + " " + "\"" + mdm[y] + "\"" + "\n";
+
+            }
+
+            MessageBox.Show("Файл открыт");
 
         }
     }
